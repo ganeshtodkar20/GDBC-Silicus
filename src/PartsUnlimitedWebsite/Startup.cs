@@ -17,8 +17,16 @@ using PartsUnlimited.Security;
 using PartsUnlimited.Telemetry;
 using PartsUnlimited.WebsiteConfiguration;
 using PartsUnlimitedWebsite.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
+
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PartsUnlimited
 {
@@ -49,6 +57,7 @@ namespace PartsUnlimited
 
             // Add EF services to the services container
             services.AddDbContext<PartsUnlimitedContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
+            services.AddDbContext<HavokContext>(opt => opt.UseInMemoryDatabase("Havoklist"));
 
 
             // Add Identity services to the services container
@@ -129,34 +138,49 @@ namespace PartsUnlimited
 
         //This method is invoked when ASPNETCORE_ENVIRONMENT is 'Development' or is not defined
         //The allowed values are Development,Staging and Production
-        public void ConfigureDevelopment(IApplicationBuilder app)
+        public void ConfigureDevelopment(IApplicationBuilder app,IServiceProvider serviceProvider)
         {
             //Display custom error page in production when error occurs
             //During development use the ErrorPage middleware to display error information in the browser
             app.UseDeveloperExceptionPage();
             app.UseDatabaseErrorPage();
 
-            Configure(app);
+            Configure(app,serviceProvider);
         }
 
         //This method is invoked when ASPNETCORE_ENVIRONMENT is 'Staging'
         //The allowed values are Development,Staging and Production
-        public void ConfigureStaging(IApplicationBuilder app)
+        public void ConfigureStaging(IApplicationBuilder app, IServiceProvider serviceProvider)
         {
             app.UseExceptionHandler("/Home/Error");
-            Configure(app);
+            Configure(app,serviceProvider);
         }
 
         //This method is invoked when ASPNETCORE_ENVIRONMENT is 'Production'
         //The allowed values are Development,Staging and Production
-        public void ConfigureProduction(IApplicationBuilder app)
+        public void ConfigureProduction(IApplicationBuilder app, IServiceProvider serviceProvider)
         {
             app.UseExceptionHandler("/Home/Error");
-            Configure(app);
+            Configure(app,serviceProvider);
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider)
         {
+
+            var havokcontext = serviceProvider.GetService<HavokContext>();
+            if (havokcontext.Havoks.Count() == 0)
+            {
+                // Create a new TodoItem if collection is empty,
+                // which means you can't delete all TodoItems.
+                havokcontext.Havoks.Add(new Havok { Name = "Item1" });
+                havokcontext.SaveChanges();
+            }
+            Func<HttpContext, bool> isApiRequest = (HttpContext context) => context.Request.Path.ToString().StartsWith("/api/");
+
+            app.UseWhen(context => !isApiRequest(context), appbuilder => { appbuilder.UseHavokMiddleware(min: TimeSpan.FromMilliseconds(10000), max: TimeSpan.FromMilliseconds(20000)); });
+
+
+
             // Configure Session.
             app.UseSession();
 
