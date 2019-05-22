@@ -1,0 +1,98 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "WebsiteName": {
+        "type": "string"
+      },
+      "PartsUnlimitedHostingPlanName": {
+        "type": "string"
+      },
+      "PartsUnlimitedHostingPlanSKU": {
+        "type": "string",
+        "allowedValues": [
+          "Standard"
+        ],
+        "defaultValue": "Standard"
+      },
+      "PartsUnlimitedHostingPlanWorkerSize": {
+        "type": "string",
+        "allowedValues": [
+          "0",
+          "1",
+          "2"
+        ],
+        "defaultValue": "0"
+      },
+      "EnableRules": {
+        "type": "bool",
+        "defaultValue": false
+      },
+      "Location": {
+        "type": "string"
+      }
+    },
+    "variables": {
+    },
+    "resources": [
+      {
+        "name": "[concat(parameters('WebsiteName'), '-Insights')]",
+        "type": "Microsoft.Insights/components",
+        "location": "[parameters('Location')]",
+        "apiVersion": "2014-04-01",
+        "tags": {
+          "displayName": "insightsComponents"
+        },
+        "properties": {
+          "ApplicationId": "[concat(parameters('WebsiteName'), '-Insights')]"
+        }
+      },
+      {
+        "name": "[parameters('PartsUnlimitedHostingPlanName')]",
+        "type": "Microsoft.Web/serverfarms",
+        "location": "[parameters('Location')]",
+        "apiVersion": "2014-06-01",
+        "dependsOn": [],
+        "tags": {
+          "displayName": "PartsUnlimitedHostingPlan"
+        },
+        "properties": {
+          "name": "[parameters('PartsUnlimitedHostingPlanName')]",
+          "sku": "[parameters('PartsUnlimitedHostingPlanSKU')]",
+          "workerSize": "[parameters('PartsUnlimitedHostingPlanWorkerSize')]",
+          "numberOfWorkers": 1
+        }
+      },
+      {
+        "name": "[parameters('WebSiteName')]",
+        "type": "Microsoft.Web/sites",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', parameters('PartsUnlimitedHostingPlanName'))]",
+          "[resourceId('Microsoft.Insights/components', concat(parameters('WebsiteName'), '-Insights'))]"        ],
+        "location": "[parameters('Location')]",
+        "apiVersion": "2014-06-01",
+        "tags": {
+          "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('PartsUnlimitedHostingPlanName'))]": "Resource",
+          "displayName": "PartsUnlimitedWebsite"
+        },
+        "properties": {
+          "name": "[parameters('WebsiteName')]",
+          "serverFarm": "[parameters('PartsUnlimitedHostingPlanName')]"
+        },
+        "resources": [
+          {
+            "name": "appsettings",
+            "type": "config",
+            "apiVersion": "2014-11-01",
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/sites', parameters('WebSiteName'))]"
+            ],
+            "properties": {
+              "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-Insights')).InstrumentationKey]",
+              "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('WebsiteName'), '-Insights')).InstrumentationKey]"
+            }
+          }
+        ]
+    }
+  ]
+}

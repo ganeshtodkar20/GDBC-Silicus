@@ -1,0 +1,64 @@
+pool:
+  name: Hosted Windows 2019 with VS2019
+##Your build pipeline references the ‘BuildConfiguration’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+variables:
+  NUGET_PACKAGES: '$(Build.SourcesDirectory)\.nuget\packages'
+  BuildConfiguration: Release
+  ServerName: ''
+  HostingPlan: ''
+  StorageAccountName: ''
+  ContainerName: ''
+  AdminPassword: 'P2ssw0rd'
+  AdminTestPassword: 'P2ssw0rd'
+  WebsiteName: ''
+  ResourceGroupName: ''
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk 2.2.106'
+  inputs:
+    version: 2.2.106
+
+- task: PowerShell@2
+  displayName: 'dotnet restore, build, test and publish'
+  inputs:
+    targetType: filePath
+    filePath: ./build.ps1
+    arguments: '$(BuildConfiguration) $(Build.SourcesDirectory) $(build.stagingDirectory)'
+ 
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results **\testresults.xml'
+  inputs:
+    testResultsFormat: VSTest
+    testResultsFiles: '**\testresults.xml'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)\partsunlimited.zip'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: ARMTemplates'
+  inputs:
+    PathtoPublish: env/Templates
+    ArtifactName: ARMTemplates
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Or Update Resource Group action on $(ResourceGroupName)'
+  inputs:
+    azureSubscription: 'GDBC2019-Azure'
+    resourceGroupName: '$(ResourceGroupName)'
+    location: 'West Europe'
+    csmFile: '$(Build.SourcesDirectory)/env/Templates/FullEnvironmentSetupMerged.json'
+    csmParametersFile: '$(Build.SourcesDirectory)/env/Templates/FullEnvironmentSetupMerged.param.json'
+    overrideParameters: '-WebsiteName $(WebsiteName) -PartsUnlimitedServerName $(ServerName) -PartsUnlimitedHostingPlanName $(HostingPlan) -CdnStorageAccountName $(StorageAccountName) -CdnStorageContainerName $(ContainerName) -CdnStorageAccountNameForDev $(StorageAccountName)-dev -CdnStorageContainerNameForDev $(ContainerName)-dev -CdnStorageAccountNameForStaging $(StorageAccountName)-stage -CdnStorageContainerNameForStaging $(ContainerName)-stage -PartsUnlimitedServerAdminLoginPassword $(AdminPassword) -PartsUnlimitedServerAdminLoginPasswordForTest $(AdminPassword)'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: 'Deploy AzureRM Web App: $(WebsiteName)'
+  inputs:
+    azureSubscription: 'GDBC2019-Azure'
+    appType: webapp
+    WebAppName: '$(WebsiteName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(ResourceGroupName)'
+    packageForLinux: '$(build.artifactstagingdirectory)\partsunlimited.zip'

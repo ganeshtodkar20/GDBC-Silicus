@@ -1,0 +1,15 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "WebsiteName": {
+            "value": "__websitename__"
+        },
+        "PartsUnlimitedHostingPlanName": {
+            "value": "__hostingplanname__"
+        },
+        "Location": {
+            "value": "__location__"
+        }
+    }
+}
