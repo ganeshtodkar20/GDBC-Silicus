@@ -4,6 +4,8 @@ pool:
 variables:
   NUGET_PACKAGES: '$(Build.SourcesDirectory)\.nuget\packages'
   BuildConfiguration: Release
+  NUGET_XMLDOC_MODE: skip
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 steps:
 - task: UseDotNet@2
