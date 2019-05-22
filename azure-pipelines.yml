@@ -4,14 +4,6 @@ pool:
 variables:
   NUGET_PACKAGES: '$(Build.SourcesDirectory)\.nuget\packages'
   BuildConfiguration: Release
-  ServerName: ''
-  HostingPlan: ''
-  StorageAccountName: ''
-  ContainerName: ''
-  AdminPassword: 'P2ssw0rd'
-  AdminTestPassword: 'P2ssw0rd'
-  WebsiteName: ''
-  ResourceGroupName: ''
 
 steps:
 - task: UseDotNet@2
@@ -42,23 +34,3 @@ steps:
   inputs:
     PathtoPublish: env/Templates
     ArtifactName: ARMTemplates
-
-- task: AzureResourceGroupDeployment@2
-  displayName: 'Azure Deployment:Create Or Update Resource Group action on $(ResourceGroupName)'
-  inputs:
-    azureSubscription: 'GDBC2019-Azure'
-    resourceGroupName: '$(ResourceGroupName)'
-    location: 'West Europe'
-    csmFile: '$(Build.SourcesDirectory)/env/Templates/FullEnvironmentSetupMerged.json'
-    csmParametersFile: '$(Build.SourcesDirectory)/env/Templates/FullEnvironmentSetupMerged.param.json'
-    overrideParameters: '-WebsiteName $(WebsiteName) -PartsUnlimitedServerName $(ServerName) -PartsUnlimitedHostingPlanName $(HostingPlan) -CdnStorageAccountName $(StorageAccountName) -CdnStorageContainerName $(ContainerName) -CdnStorageAccountNameForDev $(StorageAccountName)-dev -CdnStorageContainerNameForDev $(ContainerName)-dev -CdnStorageAccountNameForStaging $(StorageAccountName)-stage -CdnStorageContainerNameForStaging $(ContainerName)-stage -PartsUnlimitedServerAdminLoginPassword $(AdminPassword) -PartsUnlimitedServerAdminLoginPasswordForTest $(AdminPassword)'
-
-- task: AzureRmWebAppDeployment@4
-  displayName: 'Deploy AzureRM Web App: $(WebsiteName)'
-  inputs:
-    azureSubscription: 'GDBC2019-Azure'
-    appType: webapp
-    WebAppName: '$(WebsiteName)'
-    deployToSlotOrASE: true
-    ResourceGroupName: '$(ResourceGroupName)'
-    packageForLinux: '$(build.artifactstagingdirectory)\partsunlimited.zip'
