@@ -2,7 +2,6 @@ pool:
   name: Hosted Windows 2019 with VS2019
 ##Your build pipeline references the ‘BuildConfiguration’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
 variables:
-  NUGET_PACKAGES: '$(Build.SourcesDirectory)\.nuget\packages'
   BuildConfiguration: Release
   NUGET_XMLDOC_MODE: skip
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
