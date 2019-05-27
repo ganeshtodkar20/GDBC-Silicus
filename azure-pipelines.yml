@@ -2,15 +2,26 @@ pool:
   name: Hosted Windows 2019 with VS2019
 ##Your build pipeline references the ‘BuildConfiguration’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
 variables:
-  BuildConfiguration: Release
-  NUGET_XMLDOC_MODE: skip
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  - name: BuildConfiguration
+    value: Release
+  - name: NUGET_XMLDOC_MODE
+    value: skip
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: true
+  - group: 'Feed Configuration'
 
 steps:
 - task: UseDotNet@2
   displayName: 'Use .NET Core sdk 2.2.106'
   inputs:
     version: 2.2.106
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: PartsUnlimited.sln
+    vstsFeed: '$(FeedToUse)'
 
 - task: PowerShell@2
   displayName: 'dotnet restore, build, test and publish'
