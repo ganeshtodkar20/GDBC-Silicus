@@ -19,7 +19,9 @@ Write-Host "$webSiteDir"
 Write-Host "$testDir"
 
 # Restore and build projects
-& dotnet restore $solution
+if (-not $env:TF_BUILD -eq "True") {
+    & dotnet restore $solution
+}
 & dotnet build $webSite --configuration $BuildConfiguration --verbosity d
 & dotnet build $test --configuration $BuildConfiguration --verbosity d
 
