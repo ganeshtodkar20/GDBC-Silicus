@@ -12,4 +12,12 @@ ignore:
     - Microsoft.AspNetCore.All:
   SNYK-DOTNET-MICROSOFTNETCOREAPP-173754:
     - Microsoft.NETCore.App:
+  SNYK-DOTNET-SYSTEMTEXTREGULAREXPRESSIONS-174708:
+    - Microsoft.AspNetCore.All:
+    - System.Xml.XmlDocument:
+    - NSubstitute:
+    - Microsoft.NET.Test.Sdk:
+    - xunit.runner.visualstudio:
+  SNYK-DOTNET-MICROSOFTNETCOREAPP-174710:
+    - Microsoft.NETCore.App:
 patch: {}

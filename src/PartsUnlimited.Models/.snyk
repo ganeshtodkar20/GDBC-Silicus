@@ -12,4 +12,8 @@ ignore:
     - Microsoft.AspNetCore.All:
   SNYK-DOTNET-MICROSOFTNETCOREAPP-173754:
     - Microsoft.NETCore.App:
+  SNYK-DOTNET-SYSTEMTEXTREGULAREXPRESSIONS-174708:
+    - Microsoft.AspNetCore.All:
+  SNYK-DOTNET-MICROSOFTNETCOREAPP-174710:
+    - Microsoft.NETCore.App:
 patch: {}
