@@ -73,6 +73,7 @@ namespace PartsUnlimited
             services.AddTransient<IRaincheckQuery, RaincheckQuery>();
 
             services.AddSingleton<ITelemetryProvider, EmptyTelemetryProvider>();
+            services.AddSingleton<PartsUnlimitedScriptsIncluder, PartsUnlimitedScriptsIncluder>();
             services.AddTransient<IProductSearch, StringContainsProductSearch>();
 
             SetupRecommendationService(services);
