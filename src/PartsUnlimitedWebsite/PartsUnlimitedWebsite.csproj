@@ -14,17 +14,17 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>	
-	<PackageReference Include="Microsoft.AspNetCore.All" />	
-	<PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.2.1" />	
-	<PackageReference Include="Microsoft.DotNet.InternalAbstractions" Version="1.0.500-preview2-1-003177" />
-	<PackageReference Include="NCrontab" Version="3.3.1" />	
-	<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />	
-	<PackageReference Include="System.Net.Http" Version="4.3.4" />	
-	<PackageReference Include="System.Net.Security" Version="4.3.2" />	
-	<PackageReference Include="System.Net.WebSockets.WebSocketProtocol" Version="4.5.3" />	
-
- </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NCrontab" Version="3.3.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="System.Net.WebSockets.WebSocketProtocol" Version="4.5.3" />
+    <PackageReference Include="Microsoft.AspNetCore.All" />
+    <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.2.1" />
+    <PackageReference Include="Microsoft.DotNet.InternalAbstractions" Version="1.0.500-preview2-1-003177" />
+    <PackageReference Include="PartsUnlimited" Version="1.0.18" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Net.Security" Version="4.3.2" />
+  </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
