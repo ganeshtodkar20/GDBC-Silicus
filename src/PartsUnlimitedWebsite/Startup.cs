@@ -20,13 +20,11 @@ using PartsUnlimitedWebsite.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
-
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using PartsUnlimited.Scheduler;
+
+
 
 namespace PartsUnlimited
 {
@@ -58,7 +56,7 @@ namespace PartsUnlimited
             // Add EF services to the services container
             services.AddDbContext<PartsUnlimitedContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
             services.AddDbContext<HavokContext>(opt => opt.UseInMemoryDatabase("Havoklist"));
-
+            services.AddSingleton<IHostedService, ScheduleTask>();
 
             // Add Identity services to the services container
             services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -114,9 +112,11 @@ namespace PartsUnlimited
             //Add InMemoryCache
             services.AddSingleton<IMemoryCache, NoMemoryCache>();
 
-            // Add session related services.
+            // Add session related services. 
             //services.AddCaching();
             services.AddSession();
+
+                     
         }
 
         private void SetupRecommendationService(IServiceCollection services)

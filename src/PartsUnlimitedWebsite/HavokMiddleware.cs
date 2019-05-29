@@ -29,8 +29,8 @@ namespace PartsUnlimited
         {
             int delayInMs = _random.Value.Next(_minDelayInMs, _maxDelayInMs);
             var myEnt = context.Havoks.First();
-            var HavokEnabled = myEnt.HavokEnabled;
-            if (HavokEnabled)
+          
+            if (myEnt.HavokEnabled == true  && myEnt.isScaledOut== false)
             {
                 await Task.Delay(delayInMs);
             }
