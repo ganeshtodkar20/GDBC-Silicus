@@ -30,7 +30,7 @@
     }
   },
   "ConnectionStrings": {
-    "DefaultConnectionString": "Server=gdbc-slilcus.database.windows.net;Database=GDBC;User Id=silicus-admin; Password=Pa55w0rd;"
+    "DefaultConnectionString": "__ConnectionString__"
   }
 }
 
